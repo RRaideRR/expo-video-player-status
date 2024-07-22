@@ -24,8 +24,8 @@ export default function App() {
   const {width, height} = useWindowDimensions();
 
   return (
-    <View style={{flex: 1}}>
-      <View style={{position: 'absolute',  height: height, width: width, zIndex: 5, elevation: 5}}>
+    <View style={{flex: 1, backgroundColor: 'black'}}>
+      <View style={{position: 'absolute',  height: height, width: width, zIndex: 5}}>
         <VideoView
           player={player1}
           contentFit="cover"
@@ -34,10 +34,10 @@ export default function App() {
         />
       </View>
 
-      <View style={{position: 'absolute', backgroundColor: 'yellow'}}>
+      <View style={{position: 'absolute', backgroundColor: 'yellow', width: 300, height: 200}}>
         <VideoView
           player={player2}
-          contentFit="contain"
+          contentFit="cover"
           style={{width: 300, height: 200}}
           nativeControls={false}
         />

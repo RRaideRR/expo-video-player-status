@@ -1,47 +1,46 @@
 import { useVideoPlayer, VideoView } from 'expo-video';
-import { useRef, useEffect } from 'react';
-import { StyleSheet, View, Button, useWindowDimensions } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Button, Text } from 'react-native';
 
 const videoSource =
-  'https://download.samplelib.com/mp4/sample-5s.mp4';
-
-const videoSource2 =
   'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4';
 
 export default function App() {
-  const player1 = useVideoPlayer(videoSource, (player1) => {
+  const player = useVideoPlayer(videoSource, (player1) => {
     player1.muted = true;
     player1.loop = true;
     player1.play();
   });
 
-  const player2 = useVideoPlayer(videoSource2, (player2) => {
-    player2.muted = true;
-    player2.loop = true;
-    player2.play();
-  });
+  const [shouldVideoViewMount, setShouldVideoViewMount] = useState(false);
+  const [playerStatus, setPlayerStatus] = useState(undefined);
 
-  const {width, height} = useWindowDimensions();
+  useEffect(() => {
+    const subscription = player.addListener('statusChange', status => {
+      setPlayerStatus(status)
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [player]);
 
   return (
-    <View style={{flex: 1, backgroundColor: 'black'}}>
-      <View style={{position: 'absolute',  height: height, width: width, zIndex: 5}}>
-        <VideoView
-          player={player1}
+    <View style={{flex: 1}}>
+      <View style={{ height: 400, width: 300, borderColor: 'black', borderWidth: 1}}>
+        {shouldVideoViewMount ?
+          <VideoView
+          player={player}
           contentFit="cover"
           style={{width: '100%', height: '100%'}}
           nativeControls={false}
-        />
+          /> :
+          null
+        }
       </View>
 
-      <View style={{position: 'absolute', backgroundColor: 'yellow', width: 300, height: 200}}>
-        <VideoView
-          player={player2}
-          contentFit="cover"
-          style={{width: 300, height: 200}}
-          nativeControls={false}
-        />
-      </View>
+      <Text>Player Status: {playerStatus}</Text>
+      <Button title={!shouldVideoViewMount ? 'Mount' : 'Unmount'} onPress={() => setShouldVideoViewMount(!shouldVideoViewMount)} />
     </View>
   );
 }
